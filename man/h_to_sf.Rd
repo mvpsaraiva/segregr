@@ -2,37 +2,36 @@
 % Please edit documentation in R/h_to_sf.R
 \name{h_to_sf}
 \alias{h_to_sf}
-\title{Convert local results of information theory index H to SF}
+\title{Convert local information theory index H results to an sf object}
 \usage{
 h_to_sf(segregation_results, bandwidths = c())
 }
 \arguments{
-\item{segregation_results}{a segreg object containing the results of a
-call to measure_segregation().}
+\item{segregation_results}{a \code{segreg} object returned by
+\code{\link{measure_segregation}}.}
+
+\item{bandwidths}{numeric vector. Optional subset of bandwidths to include.
+When empty (default), all bandwidths are returned.}
 }
 \value{
-a spatial sf object with local index H results
+a spatial sf object with columns \code{id}, \code{bw}, and \code{h}.
 }
 \description{
-Convert local results of information theory index H to SF
+Convert local information theory index H results to an sf object
 }
 \examples{
 
-library("sf")
-library("ggplot2")
-library("segregr")
+library(sf)
+library(segregr)
 
-# load sample data from package segregr
-marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg", package = "segregr"))
-
-# calculate segregation metrics
+marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg",
+                                  package = "segregr"))
 segregation <- measure_segregation(marilia_sf)
-
-# export local index h results
 index_h <- h_to_sf(segregation)
 
-# plot local index h
-ggplot(data = index_h) +
-  geom_sf(aes(fill = h)) +
-  scale_fill_distiller(palette = "Spectral")
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  ggplot2::ggplot(data = index_h) +
+    ggplot2::geom_sf(ggplot2::aes(fill = h)) +
+    ggplot2::scale_fill_distiller(palette = "Spectral")
+}
 }

@@ -7,27 +7,24 @@
 exposure_isolation_matrix(segregation_results)
 }
 \arguments{
-\item{segregation_results}{a SEGREG object containing the results of a
-call to measure_segregation().}
+\item{segregation_results}{a \code{segreg} object returned by
+\code{\link{measure_segregation}}.}
 }
 \value{
-a data.frame with global exposure and isolation results in tabular form
+a data frame with one row per group and one column per group,
+    where off-diagonal cells are pairwise Exposure indices and diagonal
+    cells are Isolation indices.
 }
 \description{
 Convert global exposure and isolation to tabular form
 }
 \examples{
 
-library("sf")
-library("ggplot2")
-library("segregr")
+library(sf)
+library(segregr)
 
-# load sample data from package segregr
-marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg", package = "segregr"))
-
-# calculate segregation metrics
+marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg",
+                                  package = "segregr"))
 segregation <- measure_segregation(marilia_sf)
-
-# convert to tabular form
 exposure_isolation_matrix(segregation)
 }

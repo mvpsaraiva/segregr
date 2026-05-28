@@ -2,37 +2,37 @@
 % Please edit documentation in R/entropy_to_sf.R
 \name{entropy_to_sf}
 \alias{entropy_to_sf}
-\title{Convert local entropy results to SF}
+\title{Convert local entropy results to an sf object}
 \usage{
 entropy_to_sf(segregation_results, bandwidths = c())
 }
 \arguments{
-\item{segregation_results}{a segreg object containing the results of a
-call to measure_segregation().}
+\item{segregation_results}{a \code{segreg} object returned by
+\code{\link{measure_segregation}}.}
+
+\item{bandwidths}{numeric vector. Optional subset of bandwidths to include.
+When empty (default), all bandwidths are returned.}
 }
 \value{
-a spatial sf object with local entropy results
+a spatial sf object with columns \code{id}, \code{bw}, and
+    \code{entropy}.
 }
 \description{
-Convert local entropy results to SF
+Convert local entropy results to an sf object
 }
 \examples{
 
-library("sf")
-library("ggplot2")
-library("segregr")
+library(sf)
+library(segregr)
 
-# load sample data from package segregr
-marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg", package = "segregr"))
-
-# calculate segregation metrics
+marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg",
+                                  package = "segregr"))
 segregation <- measure_segregation(marilia_sf)
-
-# export local entropy results
 entropy <- entropy_to_sf(segregation)
 
-# plot local entropy
-ggplot(data = entropy) +
-  geom_sf(aes(fill = entropy)) +
-  scale_fill_distiller(palette = "Spectral")
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  ggplot2::ggplot(data = entropy) +
+    ggplot2::geom_sf(ggplot2::aes(fill = entropy)) +
+    ggplot2::scale_fill_distiller(palette = "Spectral")
+}
 }

@@ -1,12 +1,30 @@
-#' Title
+#' Collect global segregation metrics into a data frame
 #'
-#' @param segregation_results
-#' @param bandwidths
+#' Combines all global metrics returned by \code{\link{measure_segregation}}
+#' — Dissimilarity, Entropy, H, and pairwise Exposure/Isolation — into a
+#' single wide data frame, one row per bandwidth.
 #'
-#' @return
+#' @param segregation_results a \code{segreg} object returned by
+#'     \code{\link{measure_segregation}}.
+#' @param bandwidths numeric vector. Optional subset of bandwidths to include.
+#'     When empty (default), all bandwidths are returned.
+#'
+#' @return a data frame with one row per bandwidth and columns:
+#'     \code{bw}, \code{dissimilarity}, \code{entropy}, \code{h}, and one
+#'     column per pairwise exposure/isolation combination.
+#'
 #' @export
 #'
 #' @examples
+#'
+#' library(sf)
+#' library(segregr)
+#'
+#' marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg",
+#'                                   package = "segregr"))
+#' segregation <- measure_segregation(marilia_sf)
+#'
+#' global_metrics_to_df(segregation)
 global_metrics_to_df <- function(segregation_results, bandwidths = c()) {
 
   # prepare global results dataframe ----------------------------------------

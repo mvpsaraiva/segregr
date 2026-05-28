@@ -1,13 +1,31 @@
-#' Title
+#' Collect all local segregation metrics into a spatial sf object
 #'
-#' @param segregation_results a segreg object containing the results of a
-#'     call to measure_segregation().
-#' @param bandwidths
+#' Combines local Dissimilarity, Entropy, H, and pairwise Exposure/Isolation
+#' into a single wide sf object, joining results back to the input areal unit
+#' geometries.
 #'
-#' @return
+#' @param segregation_results a \code{segreg} object returned by
+#'     \code{\link{measure_segregation}}.
+#' @param bandwidths numeric vector. Optional subset of bandwidths to include.
+#'     When empty (default), all bandwidths are returned.
+#'
+#' @return a spatial sf object with one row per areal unit per bandwidth,
+#'     containing columns \code{id}, \code{bw}, \code{dissimilarity},
+#'     \code{entropy}, \code{h}, and one column per pairwise
+#'     exposure/isolation combination.
+#'
 #' @export
 #'
 #' @examples
+#'
+#' library(sf)
+#' library(segregr)
+#'
+#' marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg",
+#'                                   package = "segregr"))
+#' segregation <- measure_segregation(marilia_sf)
+#'
+#' local_metrics_to_sf(segregation)
 local_metrics_to_sf <- function(segregation_results, bandwidths = c()) {
 
   # prepare global results dataframe ----------------------------------------

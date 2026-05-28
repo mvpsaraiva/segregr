@@ -2,39 +2,36 @@
 % Please edit documentation in R/exposure_to_sf.R
 \name{exposure_to_sf}
 \alias{exposure_to_sf}
-\title{Convert local exposure results to SF}
+\title{Convert local exposure results to an sf object}
 \usage{
 exposure_to_sf(segregation_results)
 }
 \arguments{
-\item{segregation_results}{a segreg object containing the results of a
-call to measure_segregation().}
+\item{segregation_results}{a \code{segreg} object returned by
+\code{\link{measure_segregation}}.}
 }
 \value{
-a spatial sf object with local exposure results
+a spatial sf object with columns \code{id}, \code{bw},
+    \code{group_a}, \code{group_b}, and \code{exposure}.
 }
 \description{
-Convert local exposure results to SF
+Convert local exposure results to an sf object
 }
 \examples{
 
-library("sf")
-library("ggplot2")
-library("segregr")
+library(sf)
+library(segregr)
 
-# load sample data from package segregr
-marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg", package = "segregr"))
-
-# calculate segregation metrics
+marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg",
+                                  package = "segregr"))
 segregation <- measure_segregation(marilia_sf)
-
-# export local isolation results
 exposure <- exposure_to_sf(segregation)
 
-# plot local exposure
-ggplot(data = exposure) +
-  geom_sf(aes(fill = exposure), color = NA) +
-  scale_fill_distiller(palette = "Spectral") +
-  facet_grid(group_a ~ group_b) +
-  theme_void()
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  ggplot2::ggplot(data = exposure) +
+    ggplot2::geom_sf(ggplot2::aes(fill = exposure), color = NA) +
+    ggplot2::scale_fill_distiller(palette = "Spectral") +
+    ggplot2::facet_grid(group_a ~ group_b) +
+    ggplot2::theme_void()
+}
 }

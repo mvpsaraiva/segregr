@@ -2,10 +2,35 @@
 % Please edit documentation in R/global_metrics_to_df.R
 \name{global_metrics_to_df}
 \alias{global_metrics_to_df}
-\title{Title}
+\title{Collect global segregation metrics into a data frame}
 \usage{
 global_metrics_to_df(segregation_results, bandwidths = c())
 }
+\arguments{
+\item{segregation_results}{a \code{segreg} object returned by
+\code{\link{measure_segregation}}.}
+
+\item{bandwidths}{numeric vector. Optional subset of bandwidths to include.
+When empty (default), all bandwidths are returned.}
+}
+\value{
+a data frame with one row per bandwidth and columns:
+    \code{bw}, \code{dissimilarity}, \code{entropy}, \code{h}, and one
+    column per pairwise exposure/isolation combination.
+}
 \description{
-Title
+Combines all global metrics returned by \code{\link{measure_segregation}}
+— Dissimilarity, Entropy, H, and pairwise Exposure/Isolation — into a
+single wide data frame, one row per bandwidth.
+}
+\examples{
+
+library(sf)
+library(segregr)
+
+marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg",
+                                  package = "segregr"))
+segregation <- measure_segregation(marilia_sf)
+
+global_metrics_to_df(segregation)
 }

@@ -13,21 +13,44 @@ measure_segregation(
 )
 }
 \arguments{
-\item{data}{a spatial sf object of the study area divided into areal
-units (such as census tracts), containing the columns 'id', 'geometry',
-and one column per population group indicating that group's population in
-the local areal unit.}
+\item{data}{a spatial sf object of the study area divided into areal units
+(such as census tracts), containing the columns 'id', 'geometry', and
+one column per population group indicating that group's population count
+in each areal unit.}
 
-\item{id_field}{character. The name of the identificator column in the input
-data. Defaults to 'id'.}
+\item{id_field}{character. Name of the identifier column in \code{data}.
+Defaults to \code{"id"}.}
 
-\item{bandwidth}{numeric. A bandwidth, in meters, used to set the scale of
-analysis for spatial segregation measurement. When set to 0, aspatial
-metrics will be calculated.}
+\item{distance_method}{character. Method used to compute distances between
+areal unit centroids. Either \code{"geodist"} (default, uses the
+'geodist' package for fast geodesic distances) or \code{"sf"} (uses
+\code{sf::st_distance()}).}
+
+\item{weight_function}{character. Spatial kernel function applied to
+distances. Either \code{"gaussian"} (default) or \code{"step"} (binary
+kernel that weights all units within the bandwidth equally).}
+
+\item{bandwidths}{numeric vector. One or more bandwidths in metres
+controlling the spatial scale of analysis. Use \code{0} to compute
+aspatial (classical) metrics. Multiple values produce results for each
+bandwidth. Defaults to \code{0}.}
 }
 \value{
-a segreg object, a list containing the input spatial data and the
-    results of the segregation metrics.
+A named list (class \code{segreg}) containing:
+    \describe{
+      \item{areal_units}{sf object with the input geometries.}
+      \item{groups}{character vector of population group names.}
+      \item{bandwidth}{numeric vector of bandwidths used.}
+      \item{D}{data.frame of global Dissimilarity index per bandwidth.}
+      \item{E}{scalar global Entropy.}
+      \item{H}{data.frame of global Information Theory index H per bandwidth.}
+      \item{d}{data.frame of local dissimilarity values.}
+      \item{h}{data.frame of local entropy and H values.}
+      \item{P}{data.frame of global pairwise Exposure indices.}
+      \item{Q}{data.frame of global Isolation indices per group.}
+      \item{p}{data.frame of local pairwise Exposure indices.}
+      \item{q}{data.frame of local Isolation indices.}
+    }
 }
 \description{
 Calculate segregation metrics

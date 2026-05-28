@@ -1,31 +1,30 @@
-#' Convert local dissimilarity results to SF
+#' Convert local dissimilarity results to an sf object
 #'
-#' @param segregation_results a segreg object containing the results of a
-#'     call to measure_segregation().
+#' @param segregation_results a \code{segreg} object returned by
+#'     \code{\link{measure_segregation}}.
+#' @param bandwidths numeric vector. Optional subset of bandwidths to include.
+#'     When empty (default), all bandwidths are returned.
 #'
-#' @return a spatial sf object with local dissimilarity results
+#' @return a spatial sf object with columns \code{id}, \code{bw}, and
+#'     \code{dissimilarity}.
 #'
 #' @export
 #'
 #' @examples
 #'
-#' library("sf")
-#' library("ggplot2")
-#' library("segregr")
+#' library(sf)
+#' library(segregr)
 #'
-#' # load sample data from package segregr
-#' marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg", package = "segregr"))
-#'
-#' # calculate segregation metrics
+#' marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg",
+#'                                   package = "segregr"))
 #' segregation <- measure_segregation(marilia_sf)
-#'
-#' # export local dissimilarity results
 #' dissimilarity <- dissimilarity_to_sf(segregation)
 #'
-#' # plot local dissimilarity
-#' ggplot(data = dissimilarity) +
-#'   geom_sf(aes(fill = dissimilarity)) +
-#'   scale_fill_distiller(palette = "Spectral")
+#' if (requireNamespace("ggplot2", quietly = TRUE)) {
+#'   ggplot2::ggplot(data = dissimilarity) +
+#'     ggplot2::geom_sf(ggplot2::aes(fill = dissimilarity)) +
+#'     ggplot2::scale_fill_distiller(palette = "Spectral")
+#' }
 dissimilarity_to_sf <- function(segregation_results, bandwidths = c()) {
 
   result <- segregation_results$areal_units |>
