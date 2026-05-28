@@ -18,9 +18,13 @@
 #' segregation <- measure_segregation(marilia_sf)
 #' exposure_isolation_matrix(segregation)
 exposure_isolation_matrix <- function(segregation_results) {
+  bw_val <- segregation_results$bandwidth[[1]]
+  P <- segregation_results$P[segregation_results$P$bw == bw_val, ]
+  Q <- segregation_results$Q[segregation_results$Q$bw == bw_val, ]
+
   iso_exp <- rbind(
-    segregation_results$Q |> dplyr::select(group_a = group, group_b = group, iso_exp = isolation),
-    segregation_results$P |> dplyr::rename(iso_exp = exposure)
+    Q |> dplyr::select(group_a = group, group_b = group, iso_exp = isolation),
+    P |> dplyr::select(group_a, group_b, iso_exp = exposure)
   )
 
   return(
