@@ -1,0 +1,199 @@
+---
+title: "Introduction to segregr"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to segregr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 4
+)
+```
+
+## Overview
+
+**segregr** calculates spatial and aspatial segregation metrics for areal data
+(e.g. census tracts). It provides global (city-wide) and local (per areal unit)
+variants of the following indices:
+
+| Index | Global | Local |
+|---|---|---|
+| Dissimilarity | `D` | `d` |
+| Entropy | `E` | (via `h`) |
+| Information Theory (H) | `H` | `h` |
+| Isolation | `Q` | `q` |
+| Exposure | `P` | `p` |
+
+All indices can be computed aspatially (classical form, `bandwidths = 0`) or
+with a Gaussian spatial kernel that smooths population counts within a given
+bandwidth in metres.
+
+## Installation
+
+```{r, eval = FALSE}
+# Install from GitHub
+devtools::install_github("mvpsaraiva/segregr")
+```
+
+## Loading data
+
+The package ships with a sample dataset from Marília, São Paulo (Brazil),
+containing census-tract population counts by race/colour (2010 Census).
+
+```{r setup}
+library(sf)
+library(segregr)
+
+marilia_sf <- st_read(
+  system.file("extdata/marilia_2010.gpkg", package = "segregr"),
+  quiet = TRUE
+)
+
+head(marilia_sf)
+```
+
+The sf object has one row per census tract. Each column after `id` and
+`geometry` holds the population count of a group in that tract.
+
+## Aspatial (classical) metrics
+
+Pass the sf object to `measure_segregation()`. The default `bandwidths = 0`
+returns the classical, non-spatial indices.
+
+```{r aspatial}
+seg <- measure_segregation(marilia_sf)
+```
+
+### Global indices
+
+```{r global-d-h}
+# Global Dissimilarity index (one row per bandwidth)
+seg$D
+
+# Global Entropy
+seg$E
+
+# Global Information Theory index H
+seg$H
+```
+
+The Exposure/Isolation matrix shows how much each group is exposed to every
+other group (off-diagonal) and to itself (diagonal = Isolation):
+
+```{r global-matrix}
+exposure_isolation_matrix(seg)
+```
+
+Collect all global metrics into a single data frame for easy comparison across
+bandwidths:
+
+```{r global-df}
+global_metrics_to_df(seg)
+```
+
+### Local indices
+
+Local indices return one value per areal unit per bandwidth. The helper
+functions join these values back to the original geometries for mapping.
+
+```{r local-dissimilarity}
+d_sf <- dissimilarity_to_sf(seg)
+head(d_sf[, c("id", "bw", "dissimilarity")])
+```
+
+```{r local-entropy}
+e_sf <- entropy_to_sf(seg)
+head(e_sf[, c("id", "bw", "entropy")])
+```
+
+```{r local-h}
+h_sf <- h_to_sf(seg)
+head(h_sf[, c("id", "bw", "h")])
+```
+
+```{r local-isolation}
+q_sf <- isolation_to_sf(seg)
+head(q_sf[, c("id", "bw", "group", "isolation")])
+```
+
+```{r local-exposure}
+p_sf <- exposure_to_sf(seg)
+head(p_sf[, c("id", "bw", "group_a", "group_b", "exposure")])
+```
+
+All local metrics can also be joined to the geometries in a single wide sf
+object:
+
+```{r local-all}
+local_sf <- local_metrics_to_sf(seg)
+names(local_sf)
+```
+
+## Spatial metrics
+
+Passing one or more bandwidths (in metres) activates Gaussian spatial
+smoothing. Population counts are smoothed across neighbouring tracts before
+indices are computed, capturing residential mixing at a given spatial scale.
+
+```{r spatial}
+seg_spatial <- measure_segregation(marilia_sf, bandwidths = c(0, 500, 1000, 2000))
+
+# Global D at each spatial scale
+seg_spatial$D
+```
+
+Collect all global metrics at once:
+
+```{r spatial-global-df}
+global_metrics_to_df(seg_spatial)
+```
+
+### Mapping local indices
+
+```{r maps, eval = requireNamespace("ggplot2", quietly = TRUE)}
+library(ggplot2)
+
+d_spatial <- dissimilarity_to_sf(seg_spatial, bandwidths = c(0, 1000))
+
+ggplot(d_spatial) +
+  geom_sf(aes(fill = dissimilarity), colour = NA) +
+  scale_fill_distiller(palette = "Spectral") +
+  facet_wrap(~bw, labeller = label_both) +
+  theme_void() +
+  labs(title = "Local Dissimilarity index — Marília (2010)",
+       fill = "d")
+```
+
+```{r maps-h, eval = requireNamespace("ggplot2", quietly = TRUE)}
+h_spatial <- h_to_sf(seg_spatial, bandwidths = c(0, 1000))
+
+ggplot(h_spatial) +
+  geom_sf(aes(fill = h), colour = NA) +
+  scale_fill_distiller(palette = "RdYlGn") +
+  facet_wrap(~bw, labeller = label_both) +
+  theme_void() +
+  labs(title = "Local H index — Marília (2010)", fill = "h")
+```
+
+## Step kernel
+
+Use `weight_function = "step"` for a binary kernel that weights all tracts
+within the bandwidth equally (equivalent to a moving window average).
+
+```{r step}
+seg_step <- measure_segregation(marilia_sf, bandwidths = 1000,
+                                weight_function = "step")
+seg_step$D
+```
+
+## Session info
+
+```{r session}
+sessionInfo()
+```
