@@ -18,40 +18,127 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of segregr is to provide and easy way of calculating spatial segregation
-metrics in R.
+**segregr** calculates spatial and aspatial segregation metrics for areal data
+(e.g. census tracts). It implements generalised spatial versions of the
+Dissimilarity index, Theil's Entropy and Information Theory index (H),
+and the Exposure and Isolation indices. Both global (city-wide scalar) and
+local (per areal unit) variants are available. Spatial smoothing is controlled
+by a bandwidth parameter using Gaussian or step kernels.
+
+| Index | Global | Local |
+|---|---|---|
+| Dissimilarity | `D` | `d` |
+| Entropy | `E` | — |
+| Information Theory (H) | `H` | `h` |
+| Isolation | `Q` | `q` |
+| Exposure | `P` | `p` |
 
 ## Installation
 
-You can install the development version of segregr from [GitHub](https://github.com/) with:
+Install the development version from GitHub:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("mvpsaraiva/segregr")
 ```
-## Example
 
-This is a basic example which shows you how to solve a common problem:
+## Usage
 
-```{r example}
+### Load data
+
+`measure_segregation()` expects an `sf` object with one row per areal unit,
+an `id` column, a `geometry` column, and one column per population group
+containing that group's count in each unit.
+
+```{r setup, message = FALSE}
 library(sf)
 library(segregr)
 
-# load sample data from package segregr
-marilia_sf <- st_read(system.file("extdata/marilia_2010.gpkg", package = "segregr"))
-
-# calculate segregation metrics
-segregation <- measure_segregation(marilia_sf)
+marilia_sf <- st_read(
+  system.file("extdata/marilia_2010.gpkg", package = "segregr"),
+  quiet = TRUE
+)
+head(marilia_sf)
 ```
 
-```{r}
-# global dissimilarity index
-segregation$D
+### Classical (aspatial) metrics
 
-# global entropy
-segregation$E
+Pass the sf object to `measure_segregation()`. The default `bandwidths = 0`
+returns classical, non-spatial indices.
 
-# global information theory index H
-segregation$H
+```{r aspatial}
+seg <- measure_segregation(marilia_sf)
+```
+
+Global indices are returned as data frames with one row per bandwidth:
+
+```{r global}
+seg$D   # Dissimilarity
+seg$H   # Information Theory index
+seg$E   # Entropy (scalar)
+```
+
+The Exposure/Isolation matrix shows how much each group is exposed to every
+other group (off-diagonal) and to itself (diagonal = Isolation):
+
+```{r matrix}
+exposure_isolation_matrix(seg)
+```
+
+Collect all global metrics in one data frame for easy export or comparison:
+
+```{r global-df}
+global_metrics_to_df(seg)
+```
+
+### Local metrics
+
+Local indices return one value per areal unit. Helper functions join them
+back to the input geometries for mapping:
+
+```{r local}
+d_sf <- dissimilarity_to_sf(seg)
+head(d_sf[, c("id", "bw", "dissimilarity")])
+```
+
+`local_metrics_to_sf()` combines all local metrics into a single wide sf
+object:
+
+```{r local-all}
+local_sf <- local_metrics_to_sf(seg)
+names(local_sf)
+```
+
+### Spatial metrics with bandwidth
+
+Pass one or more bandwidths (in metres) to smooth population counts across
+neighbouring units before computing indices:
+
+```{r spatial}
+seg_bw <- measure_segregation(marilia_sf, bandwidths = c(0, 500, 1000, 2000))
+global_metrics_to_df(seg_bw)
+```
+
+Use `weight_function = "step"` for a binary (moving-window) kernel:
+
+```{r step}
+seg_step <- measure_segregation(marilia_sf, bandwidths = 1000,
+                                weight_function = "step")
+seg_step$D
+```
+
+### Mapping local results
+
+```{r map, message = FALSE, warning = FALSE}
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  d_bw <- dissimilarity_to_sf(seg_bw, bandwidths = c(0, 1000))
+
+  ggplot2::ggplot(d_bw) +
+    ggplot2::geom_sf(ggplot2::aes(fill = dissimilarity), colour = NA) +
+    ggplot2::scale_fill_distiller(palette = "Spectral") +
+    ggplot2::facet_wrap(~bw, labeller = ggplot2::label_both) +
+    ggplot2::theme_void() +
+    ggplot2::labs(title = "Local Dissimilarity — Marília (2010)", fill = "d")
+}
 ```
 
