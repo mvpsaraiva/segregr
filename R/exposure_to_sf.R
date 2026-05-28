@@ -30,8 +30,8 @@
 #'   theme_void()
 exposure_to_sf <- function(segregation_results) {
   return(
-    segregation_results$areal_units %>%
-      dplyr::select(id) %>%
+    segregation_results$areal_units |>
+      dplyr::select(id) |>
       dplyr::inner_join(segregation_results$p, by = c("id"))
   )
 }

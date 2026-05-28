@@ -9,8 +9,6 @@ entropy_to_sf(segregation_results, bandwidths = c())
 \arguments{
 \item{segregation_results}{a segreg object containing the results of a
 call to measure_segregation().}
-
-\item{bandwidths}{}
 }
 \value{
 a spatial sf object with local entropy results

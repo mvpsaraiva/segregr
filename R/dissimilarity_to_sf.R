@@ -28,12 +28,12 @@
 #'   scale_fill_distiller(palette = "Spectral")
 dissimilarity_to_sf <- function(segregation_results, bandwidths = c()) {
 
-  result <- segregation_results$areal_units %>%
-    dplyr::left_join(segregation_results$d, by = c("id")) %>%
+  result <- segregation_results$areal_units |>
+    dplyr::left_join(segregation_results$d, by = c("id")) |>
     dplyr::select(id, bw, dissimilarity = d)
 
   if (length(bandwidths) != 0) {
-    result <- filter(result, bw %in% bandwidths)
+    result <- dplyr::filter(result, bw %in% bandwidths)
   }
 
   return(result)

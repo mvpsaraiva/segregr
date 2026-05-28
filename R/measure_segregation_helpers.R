@@ -39,7 +39,7 @@ calculate_distances_sf <- function(points) {
 
 calculate_distances_geodist <- function(points) {
   points_latlon <- suppressWarnings(
-    sf::st_transform(points, 4326) %>%
+    sf::st_transform(points, 4326) |>
       sf::st_coordinates()
   )
 

@@ -28,12 +28,12 @@
 #'   scale_fill_distiller(palette = "Spectral")
 h_to_sf <- function(segregation_results, bandwidths = c()) {
 
-  result <- segregation_results$areal_units %>%
-    dplyr::left_join(segregation_results$h, by = c("id")) %>%
+  result <- segregation_results$areal_units |>
+    dplyr::left_join(segregation_results$h, by = c("id")) |>
     dplyr::select(id, bw, h)
 
   if (length(bandwidths) != 0) {
-    result <- filter(result, bw %in% bandwidths)
+    result <- dplyr::filter(result, bw %in% bandwidths)
   }
 
   return(result)

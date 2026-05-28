@@ -1,13 +1,5 @@
 # nocov start
-utils::globalVariables(c(".", "%>%", ":=", "%like%", "%chin%", "set"))
-
-.onLoad <- function(lib, pkg) {
-  requireNamespace("sf")
-  requireNamespace("dplyr")
-  requireNamespace("data.table")
-  requireNamespace("geodist")
-}
-
+utils::globalVariables(c(".", ":=", "%chin%", "set"))
 
 #' @importFrom data.table := %between% fifelse %chin% set
 NULL

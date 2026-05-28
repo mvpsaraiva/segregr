@@ -62,7 +62,7 @@ measure_segregation <- function(data,
   # 2. Extract population ----------------------------------------------------
 
   ## data.frame with the population in the study area, per group
-  population_df <- st_set_geometry(data, NULL)
+  population_df <- sf::st_set_geometry(data, NULL)
   data.table::setDT(population_df)
 
   ## use the order of the columns in the input data to order group names as factors
@@ -100,7 +100,7 @@ measure_segregation <- function(data,
   # 5. Calculate Population Intensity ----------------------------------------
   ## population data.frame to matrix
   ids <- locations_sf$id
-  population_matrix <- population_df %>% dplyr::select(-id) %>% base::as.matrix()
+  population_matrix <- population_df |> dplyr::select(-id) |> base::as.matrix()
 
   ## population intensity by group and location
   intensity_group <- purrr::map(names(weights_matrix), function(x) {
@@ -125,10 +125,10 @@ measure_segregation <- function(data,
   intensity_local <- data.table::rbindlist(intensity_local)
   data.table::setnames(intensity_local, old = "intensity.V1", new = "intensity")
 
-  intensity_df <- intensity_group %>%
-    dplyr::select(-population) %>%
-    tidyr::pivot_wider(names_from = group, values_from = intensity) %>%
-    setDT()
+  intensity_df <- intensity_group |>
+    dplyr::select(-population) |>
+    tidyr::pivot_wider(names_from = group, values_from = intensity) |>
+    data.table::setDT()
 
   rm(weights_matrix)
 
@@ -204,7 +204,7 @@ measure_segregation <- function(data,
     bw = bandwidths,
     group_a = group_names,
     group_b = group_names
-  ) %>% data.table::setDT()
+  ) |> data.table::setDT()
 
   ### Local Exposure and Isolation
   iso_exp_matrix[iso_exp_df,

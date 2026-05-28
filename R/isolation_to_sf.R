@@ -30,8 +30,8 @@
 #'   theme_void()
 isolation_to_sf <- function(segregation_results) {
   return(
-    segregation_results$areal_units %>%
-      dplyr::select(id) %>%
+    segregation_results$areal_units |>
+      dplyr::select(id) |>
       dplyr::left_join(segregation_results$q, by = c("id"))
   )
 }

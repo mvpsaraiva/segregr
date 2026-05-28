@@ -6,12 +6,6 @@
 \usage{
 global_metrics_to_df(segregation_results, bandwidths = c())
 }
-\arguments{
-\item{bandwidths}{}
-}
-\value{
-
-}
 \description{
 Title
 }

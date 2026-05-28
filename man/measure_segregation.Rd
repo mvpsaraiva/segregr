@@ -8,6 +8,7 @@ measure_segregation(
   data,
   id_field = "id",
   distance_method = "geodist",
+  weight_function = "gaussian",
   bandwidths = 0
 )
 }
