@@ -80,15 +80,18 @@ calculate_step_weights <- function(distances, bandwidths) {
   return(weights)
 }
 
-assign_population <- function(weights, groups, population) {
-    groups_dt <- data.table::data.table(group = groups, k = 1)
-    weights[, k := 1]
-
-    dm <- merge(weights, groups_dt, allow.cartesian = TRUE)
-
-    ## grab population counts
-    dm[population, on = .(from = id, group), population.from := i.population]
-    dm[population, on = .(to = id, group), population.to := i.population]
-
-    return(dm)
-}
+# assign_population is reserved for future use and is not called by any
+# exported function in the current version of the package.
+#
+# assign_population <- function(weights, groups, population) {
+#     groups_dt <- data.table::data.table(group = groups, k = 1)
+#     weights[, k := 1]
+#
+#     dm <- merge(weights, groups_dt, allow.cartesian = TRUE)
+#
+#     ## grab population counts
+#     dm[population, on = .(from = id, group), population.from := i.population]
+#     dm[population, on = .(to = id, group), population.to := i.population]
+#
+#     return(dm)
+# }

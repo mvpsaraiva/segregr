@@ -48,7 +48,7 @@ segregation <- measure_segregation(marilia_sf)
 # global dissimilarity index
 segregation$D
 
-#' # global entropy
+# global entropy
 segregation$E
 
 # global information theory index H
