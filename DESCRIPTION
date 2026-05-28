@@ -1,27 +1,31 @@
 Package: segregr
 Type: Package
-Title: Spatial segregation metrics in R
-Version: 0.0.0.9000
-Author: 
-    person("Marcus", "Saraiva", email = "marcus.saraiva@gmail.com", role = c("aut", "cre"),
-    comment = c(ORCID = "0000-0001-6218-2338"))
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: This package makes it easy to calculate segregation metrics  in R. 
-    The metrics implemented are *generalised*, *spatial*, and *global* / *local* 
-    versions of the Dissimilarity index, and Theil's Entropy and Information 
-    Theory indices (metrics of evenness), and the Isolation and Exposure indices.
+Title: Spatial Segregation Metrics for Areal Data
+Version: 0.1.0
+Authors@R: person("Marcus", "Saraiva", email = "marcus.saraiva@gmail.com",
+    role = c("aut", "cre"), comment = c(ORCID = "0000-0001-6218-2338"))
+Description: Calculates spatial and aspatial segregation metrics for areal
+    data. Implements generalised spatial versions of the Dissimilarity index,
+    Theil's Entropy and Information Theory indices (measures of evenness), and
+    the Isolation and Exposure indices. Both global and local variants of each
+    metric are provided, with optional Gaussian spatial smoothing controlled
+    by a bandwidth parameter.
 License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
-RoxygenNote: 7.1.1
-Suggests: 
-    testthat
-Imports: 
+Depends:
+    R (>= 4.1.0)
+Imports:
     sf,
     dplyr,
     tidyr,
-    magrittr,
     purrr,
     tibble,
     data.table,
     geodist
+Suggests:
+    testthat,
+    ggplot2,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
+RoxygenNote: 7.1.1
