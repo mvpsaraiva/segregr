@@ -8,3 +8,6 @@
 ^pkgdown$
 ^\.positai$
 ^\.claude$
+^\.github$
+^cran_manual\.html$
+^guia_publicacao_cran_pacote_r\.md$
