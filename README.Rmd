@@ -16,6 +16,12 @@ knitr::opts_chunk$set(
 # segregr
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/mvpsaraiva/segregr/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mvpsaraiva/segregr/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/segregr)](https://CRAN.R-project.org/package=segregr)
+[![codecov](https://codecov.io/gh/mvpsaraiva/segregr/branch/main/graph/badge.svg)](https://app.codecov.io/gh/mvpsaraiva/segregr)
+[![pkgdown](https://github.com/mvpsaraiva/segregr/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/mvpsaraiva/segregr/actions/workflows/pkgdown.yaml)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
 **segregr** calculates spatial and aspatial segregation metrics for areal data
